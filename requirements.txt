@@ -1,0 +1,14 @@
+# Core dependencies for High-Level Industrial AI Synthetic Dataset Swarm
+pydantic>=2.5.0
+httpx>=0.25.0
+rich>=13.7.0
+python-dotenv>=1.0.0
+tqdm>=4.66.0
+
+# Optional LLM SDKs (Can also use direct HTTP via httpx)
+google-generativeai>=0.8.0
+openai>=1.12.0
+anthropic>=0.18.0
+
+# Testing
+pytest>=7.4.0
