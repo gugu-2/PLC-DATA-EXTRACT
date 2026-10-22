@@ -136,7 +136,9 @@ class SubAgentWorker:
             domain_id=evolved_domain.id,
             domain_name=evolved_domain.name,
             function_block_name=evolved_domain.function_block_name,
-            validation_metrics=val_result.metrics
+            validation_metrics=val_result.metrics,
+            category=evolved_domain.category.lower().replace(" ", "_").replace("&", "and"),
+            task_type="cyber_physical_state_space_control"
         )
 
         logger.info(f"Agent #{self.agent_id} successfully saved record [{rec_id}] -> {saved_path.name}")

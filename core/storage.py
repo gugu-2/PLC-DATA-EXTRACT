@@ -4,6 +4,7 @@ Saves validated records atomically to disk with SHA-256 deduplication and index 
 """
 
 import os
+import re
 import json
 import uuid
 import hashlib
@@ -23,8 +24,8 @@ class DatasetStorage:
         self._load_existing_hashes()
 
     def _load_existing_hashes(self):
-        """Scans existing JSON files in save_dir to populate deduplication hashes."""
-        for file_path in self.save_dir.glob("*.json"):
+        """Scans existing JSON files in save_dir and its subfolders to populate deduplication hashes."""
+        for file_path in self.save_dir.rglob("*.json"):
             try:
                 with open(file_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
@@ -54,15 +55,25 @@ class DatasetStorage:
         domain_name: str,
         function_block_name: str,
         validation_metrics: Dict[str, Any],
-        record_id: Optional[str] = None
+        record_id: Optional[str] = None,
+        category: Optional[str] = None,
+        task_type: Optional[str] = None
     ) -> Tuple[Path, str]:
         """
         Atomically saves a record using a temporary file to avoid partial writes.
+        Supports structured categorization into task and domain subfolders.
         """
         code_hash = self.compute_hash(code)
         rec_id = record_id or f"agent_{uuid.uuid4().hex[:8]}"
-        final_path = self.save_dir / f"{rec_id}.json"
-        temp_path = self.save_dir / f".tmp_{rec_id}.json"
+        
+        target_dir = self.save_dir
+        if category:
+            clean_sub = re.sub(r"[^a-zA-Z0-9_\-]", "_", category.lower())
+            target_dir = self.save_dir / clean_sub
+            target_dir.mkdir(parents=True, exist_ok=True)
+
+        final_path = target_dir / f"{rec_id}.json"
+        temp_path = target_dir / f".tmp_{rec_id}.json"
 
         # Format assistant content in markdown code fence if not already enclosed
         formatted_code = code.strip()
@@ -75,6 +86,8 @@ class DatasetStorage:
             "domain_id": domain_id,
             "domain_name": domain_name,
             "function_block_name": function_block_name,
+            "category": category or "general_industrial",
+            "task_type": task_type or "cyber_physical_state_space_control",
             "char_count": len(code),
             "sha256": code_hash,
             "validation": validation_metrics,
@@ -94,10 +107,10 @@ class DatasetStorage:
         return final_path, rec_id
 
     def get_total_records(self) -> int:
-        return len(list(self.save_dir.glob("*.json")))
+        return len(list(self.save_dir.rglob("*.json")))
 
     def list_all_records(self) -> List[Path]:
-        return sorted(list(self.save_dir.glob("*.json")))
+        return sorted(list(self.save_dir.rglob("*.json")))
 
 
 storage = DatasetStorage()
