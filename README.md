@@ -40,6 +40,12 @@ data/
 │   ├── github_bulk_verified/                # High-integrity verified open-source industrial code
 │   └── direct_industrial_repos/             # 1,555 direct industrial codebase extractions
 │
+├── 05_by_ai_model_and_api_role/
+│   ├── gemini_current_3_8_pro_flash_antigravity_swarm/   # 188 God-Tier raw blocks + ShareGPT/Alpaca/OpenAI formats
+│   ├── gemini_pro_1_5_evol_instruct_and_enterprise_v3/   # 1,634 evolved edge cases + enterprise machinery datasets
+│   ├── claude_3_5_sonnet_opus_cloud_architect/           # 5,928 verified datasets + master training splits + safety invariants
+│   └── local_ollama_qwen_deepseek_edge_models/           # 1,555 direct codebases + OSCAT & Siemens library benchmarks
+│
 └── raw/                                     # Flat archive of all 188 raw God-Tier JSON records
 ```
 
